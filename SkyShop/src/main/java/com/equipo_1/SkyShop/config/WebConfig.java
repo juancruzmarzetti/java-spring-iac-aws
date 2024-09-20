@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")  // Permite todas las rutas
-                        .allowedOrigins("http://ec2-34-239-185-158.compute-1.amazonaws.com")  // Permite solo tu frontend
+                        .allowedOrigins("http://ec2-54-196-7-136.compute-1.amazonaws.com")  // Permite solo tu frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")  // Métodos permitidos
                         .allowedHeaders("*")  // Permite todos los headers
                         .allowCredentials(true);  // Permite credenciales como cookies, authorization headers
