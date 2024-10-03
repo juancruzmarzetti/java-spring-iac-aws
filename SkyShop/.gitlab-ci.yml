@@ -16,8 +16,9 @@ get_db_ip:
   script:
     - yum update -y
     - yum install -y awscli bind-utils
-    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
-    - echo "DB IP Address: $DB_PRIVATE_IP"
+    - |
+      DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
+      echo "DB IP Address: $DB_PRIVATE_IP"
 
 build:
   stage: build
