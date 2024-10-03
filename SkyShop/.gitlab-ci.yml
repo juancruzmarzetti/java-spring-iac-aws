@@ -19,6 +19,10 @@ get_db_ip:
     - |
       DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
       echo "DB IP Address: $DB_PRIVATE_IP"
+      echo "$DB_PRIVATE_IP" > db_private_ip.txt
+  artifacts:
+    paths:
+      - db_private_ip.txt
 
 build:
   stage: build
@@ -30,6 +34,7 @@ build:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
+    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Maven compile started"
     - mvn compile
@@ -41,8 +46,7 @@ test:
   stage: test
   image: $MVN_IMAGE
   before_script:
-    - |
-      echo "DB IP Address: $DB_PRIVATE_IP"
+    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
@@ -68,6 +72,8 @@ create_image:
     DOCKER_HOST: tcp://thedockerhost:2375/
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
@@ -99,6 +105,7 @@ deploy:
     - touch ~/.ssh/config
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | sh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - rm src/main/resources/application-secrets.properties
   script:
