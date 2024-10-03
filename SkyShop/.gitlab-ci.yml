@@ -1,5 +1,4 @@
 stages:
-  - get_db_ip
   - build
   - test
   - create_image
@@ -9,16 +8,6 @@ variables:
   MVN_IMAGE: maven:3.9.9-amazoncorretto-21-al2023
   SECURE_FILES_DOWNLOAD_PATH: "./"
   DB_PRIVATE_IP: " "
-
-get_db_ip:
-  stage: get_db_ip
-  image: amazonlinux:2
-  script:
-    - yum update -y
-    - yum install -y awscli bind-utils
-    - |
-      DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
-      echo "DB IP Address: $DB_PRIVATE_IP"
 
 build:
   stage: build
@@ -43,8 +32,6 @@ build:
 test:
   stage: test
   image: $MVN_IMAGE
-  before_script:
-    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
@@ -73,8 +60,6 @@ create_image:
     DOCKER_HOST: tcp://thedockerhost:2375/
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
-  before_script:
-    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
