@@ -21,8 +21,8 @@ build:
     - chmod 600 juankeys.pem
     - curl -sL https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm -o mysql80-community-release-el8-1.noarch.rpm
     - dnf install -y mysql80-community-release-el8-1.noarch.rpm
-    - dnf config-manager --enable mysql80-community-release
     - dnf install -y dnf-plugins-core
+    - dnf config-manager --enable mysql80-community-release
     - dnf clean all
     - dnf makecache
     - echo "Maven getting db ip and installing MySQL Client"
