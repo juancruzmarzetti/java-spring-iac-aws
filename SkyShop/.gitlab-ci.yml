@@ -40,6 +40,9 @@ build:
 test:
   stage: test
   image: $MVN_IMAGE
+  before_script:
+    - |
+      echo "DB IP Address: $DB_PRIVATE_IP"
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
@@ -47,7 +50,6 @@ test:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
-    - echo "DB IP Address: $DB_PRIVATE_IP"
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Testeando código de nuevo"
     - mvn test
