@@ -11,8 +11,6 @@ variables:
 build:
   stage: build
   image: $MVN_IMAGE
-  before_script:
-    - 
   script:
     - cd SkyShop
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" >> src/main/resources/application-secrets.properties
