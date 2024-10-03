@@ -20,7 +20,7 @@ build:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - dnf install -y aws-cli bind-utils mysql-community-server
+    - dnf install -y aws-cli bind-utils mysql-community-client
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - echo "spring.datasource.url=jdbc:mysql://$DB_PRIVATE_IP:3306/mydb" >> src/main/resources/application-secrets.properties
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
