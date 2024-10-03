@@ -39,6 +39,8 @@ build:
     - echo "Maven compile started"
     - mvn compile
     - rm src/main/resources/application-secrets.properties
+  dependencies:
+    - get_db_ip
   only:
     - main
 
@@ -58,6 +60,8 @@ test:
     - echo "Testeando código de nuevo"
     - mvn test
     - rm src/main/resources/application-secrets.properties
+  dependencies:
+    - get_db_ip
   only:
     - main
 
@@ -87,6 +91,8 @@ create_image:
     - docker push juancruzmarzetti/sky-shop:back
     - rm juankeys.pem
     - rm src/main/resources/application-secrets.properties
+  dependencies:
+    - get_db_ip
   only:
     - main
 
@@ -111,5 +117,7 @@ deploy:
   script:
     - ansible-playbook -i hosts.ini playbook.yaml --key-file "juankeys.pem"
     - rm juankeys.pem
+  dependencies:
+    - get_db_ip
   only:
     - main
