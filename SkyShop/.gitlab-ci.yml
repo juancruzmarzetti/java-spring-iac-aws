@@ -31,7 +31,7 @@ build:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - apk update && apk add --no-cache aws-cli bind-tools
+    - dnf install -y aws-cli bind-utils
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Maven compile started"
@@ -53,7 +53,7 @@ test:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - apk update && apk add --no-cache aws-cli bind-tools
+    - dnf install -y aws-cli bind-utils
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Testeando código de nuevo"
@@ -83,7 +83,7 @@ create_image:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - apk update && apk add --no-cache aws-cli bind-tools
+    - dnf install -y aws-cli bind-utils
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -110,7 +110,7 @@ deploy:
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | sh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - echo "Maven getting db ip"
-    - apk update && apk add --no-cache aws-cli bind-tools
+    - dnf install -y aws-cli bind-utils
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - rm src/main/resources/application-secrets.properties
