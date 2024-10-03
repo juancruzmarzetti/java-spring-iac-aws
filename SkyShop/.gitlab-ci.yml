@@ -19,10 +19,6 @@ get_db_ip:
     - |
       DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
       echo "DB IP Address: $DB_PRIVATE_IP"
-      echo "$DB_PRIVATE_IP" > db_private_ip.txt
-  artifacts:
-    paths:
-      - db_private_ip.txt
 
 build:
   stage: build
@@ -34,13 +30,13 @@ build:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
-    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
+    - echo "Maven getting db ip"
+    - apk update && apk add --no-cache aws-cli bind-tools
+    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Maven compile started"
     - mvn compile
     - rm src/main/resources/application-secrets.properties
-  dependencies:
-    - get_db_ip
   only:
     - main
 
@@ -56,12 +52,13 @@ test:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
+    - echo "Maven getting db ip"
+    - apk update && apk add --no-cache aws-cli bind-tools
+    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Testeando código de nuevo"
     - mvn test
     - rm src/main/resources/application-secrets.properties
-  dependencies:
-    - get_db_ip
   only:
     - main
 
@@ -85,14 +82,15 @@ create_image:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
+    - echo "Maven getting db ip"
+    - apk update && apk add --no-cache aws-cli bind-tools
+    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t juancruzmarzetti/sky-shop:back .
     - docker push juancruzmarzetti/sky-shop:back
     - rm juankeys.pem
     - rm src/main/resources/application-secrets.properties
-  dependencies:
-    - get_db_ip
   only:
     - main
 
@@ -111,13 +109,13 @@ deploy:
     - touch ~/.ssh/config
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | sh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-    - DB_PRIVATE_IP=$(cat db_private_ip.txt)
+    - echo "Maven getting db ip"
+    - apk update && apk add --no-cache aws-cli bind-tools
+    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - rm src/main/resources/application-secrets.properties
   script:
     - ansible-playbook -i hosts.ini playbook.yaml --key-file "juankeys.pem"
     - rm juankeys.pem
-  dependencies:
-    - get_db_ip
   only:
     - main
