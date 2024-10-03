@@ -1,5 +1,5 @@
 stages:
-  - get_rds_db_private_ip
+  - get_db_ip
   - build
   - test
   - create_image
@@ -10,8 +10,8 @@ variables:
   SECURE_FILES_DOWNLOAD_PATH: "./"
   DB_PRIVATE_IP: " "
 
-get_rds_db_private_ip:
-  stage: get_rds_db_private_ip
+get_db_ip:
+  stage: get_db_ip
   image: amazonlinux:2
   script:
     - yum update -y
