@@ -11,7 +11,7 @@ variables:
   DB_PRIVATE_IP: " "
 
 get_rds_db_private_ip:
-  stage: build
+  stage: get_rds_db_private_ip
   image: amazonlinux:2
   script:
     - yum update -y
