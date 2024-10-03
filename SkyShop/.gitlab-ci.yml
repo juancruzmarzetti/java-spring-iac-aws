@@ -20,7 +20,7 @@ build:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - dnf install -y aws-cli bind-utils
+    - dnf install -y aws-cli bind-utils mysql-community-server
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - echo "spring.datasource.url=jdbc:mysql://$DB_PRIVATE_IP:3306/mydb" >> src/main/resources/application-secrets.properties
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
@@ -42,7 +42,7 @@ test:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - dnf install -y aws-cli bind-utils
+    - dnf install -y aws-cli bind-utils mysql-community-server
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - echo "spring.datasource.url=jdbc:mysql://$DB_PRIVATE_IP:3306/mydb" >> src/main/resources/application-secrets.properties
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
@@ -72,7 +72,7 @@ create_image:
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
     - echo "Maven getting db ip"
-    - dnf install -y aws-cli bind-utils
+    - dnf install -y aws-cli bind-utils mysql-community-server
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - echo "spring.datasource.url=jdbc:mysql://$DB_PRIVATE_IP:3306/mydb" >> src/main/resources/application-secrets.properties
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
@@ -101,7 +101,7 @@ deploy:
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | sh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - echo "Maven getting db ip"
-    - dnf install -y aws-cli bind-utils
+    - dnf install -y aws-cli bind-utils mysql-community-server
     - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - echo "spring.datasource.url=jdbc:mysql://$DB_PRIVATE_IP:3306/mydb" >> src/main/resources/application-secrets.properties
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
