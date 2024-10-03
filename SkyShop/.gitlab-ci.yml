@@ -1,4 +1,5 @@
 stages:
+  - get_rds_db_private_ip
   - build
   - test
   - create_image
@@ -7,6 +8,16 @@ stages:
 variables:
   MVN_IMAGE: maven:3.9.9-amazoncorretto-21-al2023
   SECURE_FILES_DOWNLOAD_PATH: "./"
+  DB_PRIVATE_IP: " "
+
+get_rds_db_private_ip:
+  stage: build
+  image: amazonlinux:2
+  script:
+    - yum update -y
+    - yum install -y awscli bind-utils
+    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
+    - echo "DB IP Address: $DB_PRIVATE_IP"
 
 build:
   stage: build
@@ -16,9 +27,6 @@ build:
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" >> src/main/resources/application-secrets.properties
     - echo "aws.secretAccessKey=$AWS_SECRET_ACCESS_KEY" >> src/main/resources/application-secrets.properties
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
-    - apt-get update && apt-get install -y awscli
-    - apt-get update && apt-get install -y dnsutils
-    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Maven compile started"
     - mvn compile
@@ -34,9 +42,6 @@ test:
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
     - echo "aws.secretAccessKey=$AWS_SECRET_ACCESS_KEY" >> src/main/resources/application-secrets.properties
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
-    - apt-get update && apt-get install -y awscli
-    - apt-get update && apt-get install -y dnsutils
-    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Testeando código de nuevo"
     - mvn test
@@ -62,9 +67,6 @@ create_image:
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
     - echo "$JUANKEYS" > juankeys.pem
     - chmod 600 juankeys.pem
-    - apt-get update && apt-get install -y awscli
-    - apt-get update && apt-get install -y dnsutils
-    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t juancruzmarzetti/sky-shop:back .
@@ -89,9 +91,6 @@ deploy:
     - touch ~/.ssh/config
     - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | sh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-    - apt-get update && apt-get install -y awscli
-    - apt-get update && apt-get install -y dnsutils
-    - DB_PRIVATE_IP=$(nslookup mydb.c5wcu4a6u8bc.us-east-1.rds.amazonaws.com | grep Address | tail -n 1 | awk '{print $2}')
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - rm src/main/resources/application-secrets.properties
   script:
