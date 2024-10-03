@@ -28,6 +28,8 @@ build:
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" >> src/main/resources/application-secrets.properties
     - echo "aws.secretAccessKey=$AWS_SECRET_ACCESS_KEY" >> src/main/resources/application-secrets.properties
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
+    - echo "$JUANKEYS" > juankeys.pem
+    - chmod 600 juankeys.pem
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Maven compile started"
     - mvn compile
@@ -43,6 +45,8 @@ test:
     - echo "aws.accessKeyId=$AWS_ACCESS_KEY_ID" > src/main/resources/application-secrets.properties
     - echo "aws.secretAccessKey=$AWS_SECRET_ACCESS_KEY" >> src/main/resources/application-secrets.properties
     - echo "sendgrid.key = $SENDGRID_API_KEY" >> src/main/resources/application-secrets.properties
+    - echo "$JUANKEYS" > juankeys.pem
+    - chmod 600 juankeys.pem
     - ssh -i juankeys.pem -L 3306:$DB_PRIVATE_IP:3306 ec2-user@54.162.85.173 -N &
     - echo "Testeando código de nuevo"
     - mvn test
