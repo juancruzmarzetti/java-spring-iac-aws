@@ -13,11 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")  // Permite todas las rutas
-                        .allowedOrigins("http://ec2-54-175-245-83.compute-1.amazonaws.com")  // Permite solo tu frontend
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")  // Métodos permitidos
-                        .allowedHeaders("*")  // Permite todos los headers
-                        .allowCredentials(true);  // Permite credenciales como cookies, authorization headers
+                registry.addMapping("/**") 
+                        .allowedOrigins("http://ec2-54-175-245-83.compute-1.amazonaws.com") // dirección dns publica de instancia ec2
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")  
+                        .allowedHeaders("*")  
+                        .allowCredentials(true); 
             }
         };
     }
