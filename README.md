@@ -47,7 +47,7 @@
 
   (algunas de estas variables no se usan pero pueden utilizarse para hacer dinámica la inyección de algunos valores en el application-secrets.properties mediante scripts en el pipeline)
 
-  Esta IaC se complementa con la infraestructura de Terraform de (este repositorio)[https://github.com/juancruzmarzetti/full-aws-iac] y tambíen con el Front-End de (este otro repositorio)[https://github.com/juancruzmarzetti/react-vite-iac-aws]
+  Esta IaC se complementa con la infraestructura de Terraform de [este repositorio](https://github.com/juancruzmarzetti/full-aws-iac) y tambíen con el Front-End de [este otro repositorio](https://github.com/juancruzmarzetti/react-vite-iac-aws)
 ---
 
 ### ♻ Reusable Infrastructure
